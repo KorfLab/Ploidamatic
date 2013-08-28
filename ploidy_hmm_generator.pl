@@ -4,8 +4,9 @@ use warnings;
 use fatal;
 use FileHandle;
 use Getopt::Std;
-use vars qw($opt_h $opt_q $opt_d $opt_l $opt_t $opt_z $opt_Z $opt_s $opt_S);
-getopts('hdt:l:z:Z:s:S:');
+use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
+	$opt_z $opt_Z $opt_s $opt_S);
+getopts('hdt:l:m:z:Z:s:S:');
 
 my $WDIR   = "ploidy_scratch";
 my $TRANS  = "1e-6";
@@ -21,18 +22,22 @@ usage: ploidy_hmm_generator.pl <sam file(s)>
 options:
   -d <string> working directory name [$WDIR]
   -t <float>  CNV transition probability [$TRANS]
+  -l <int>    low-count threshold [$LOW]
+  -m <int>    maximum value from any emission [$LIMIT]
   -z <float>  transition probability to zero state [$ZERO1]
   -Z <float>  transition probability stay zero state [$ZERO2]
   -s <float>  transition probability to spike state [$SPIKE1]
   -S <float>  transition probability stay spike state [$SPIKE2]
-  -l <int>    low-count threshold [$LOW]
-  -q          quiet mode
   -h          help (this usage statement)
 " unless @ARGV;
 
-$LOW   = $opt_l if $opt_l;
-$TRANS = $opt_t if $opt_t;
-# set the others
+$LOW    = $opt_l if $opt_l;
+$TRANS  = $opt_t if $opt_t;
+$LIMIT  = $opt_m if $opt_m;
+$ZERO1  = $opt_z if $opt_z;
+$ZERO2  = $opt_Z if $opt_Z;
+$SPIKE1 = $opt_s if $opt_s;
+$SPIKE2 = $opt_S if $opt_S;
 
 # Set up working directory
 run("mkdir $WDIR") unless -d $WDIR;
