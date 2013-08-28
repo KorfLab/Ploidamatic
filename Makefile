@@ -2,36 +2,28 @@
 # Makefile for Ploidy #
 #######################
 
-LIB = -lm -lstochhmm
-INC = -IStochHMM/src
-LNC = -LStochHMM/src
-CC  = g++
-CFLAGS = -O2 -Wall
+APP1 = ploidy
+SRC1 = ploidy.cpp
 
-
-APP = ploidy
-SRC = ploidy.cpp
-OBJ = ploidy.o
-
-DATE = $(shell date +\%Y-\%m-\%d)
+APP2 = cpw
+SRC2 = cpw.c
 
 ###########
 # Targets #
 ###########
 
+default:
+	make $(APP1)
+	make $(APP2)
 
-$(APP): $(OBJ)
-	$(CC) -o $(APP) $(CFLAGS) $(LNC) $(OBJ) $(LIB)
+
+$(APP1): $(SRC1)
+	g++ -o $(APP1) $(SRC1) -IStochHMM/src -LStochHMM/src -lm -lstochhmm
+
+$(APP2): $(SRC2)
+	gcc -o $(APP2) $(SRC2) -O2 -Wall -Werror
 
 clean:
-	rm -f *.o $(APP1)
-
-
-###################
-# Inference Rules #
-###################
-
-%.o: %.cpp
-	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+	rm -f *.o $(APP1) $(APP2)
 
 
