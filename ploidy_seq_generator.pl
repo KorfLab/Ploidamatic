@@ -1,11 +1,23 @@
 #!/usr/bin/perl
 use strict; use warnings; use fatal;
-use DataBrowser;
+use Getopt::Std;
+use vars qw($opt_h $opt_f $opt_s);
+getopts('hf:s:');
+
+my $FILENAME = "generated";
 
 die "
-usage: $0 <hmm file> <emission file> <length> <filename>\n"
-	unless @ARGV == 4;
-my ($HMMFILE, $EMITFILE, $LENGTH, $FILENAME) = @ARGV;
+usage: $0 [options] <hmm file> <emission file> <length>
+options:
+  -h  help (this message)
+  -f  <filename> [$opt_f]
+  -s  <int> static state generation of <int> iterations
+" unless @ARGV == 3;
+
+my $STATIC_LENGTH = $opt_s;
+$FILENAME = $opt_f if $opt_f;
+
+my ($HMMFILE, $EMITFILE, $LENGTH) = @ARGV;
 
 # read HMM file
 open(my $hfh, $HMMFILE) or die;
@@ -82,37 +94,45 @@ open(my $tsv, ">$FILENAME.tsv") or die;
 print $fasta ">$FILENAME\n";
 print $tsv "#$FILENAME\n";
 
-my $csn = "1x"; # current state name
-my $csb = 0;    # current state begin
-for (my $i = 0; $i < $LENGTH; $i++) {
-	
-	# emit a symbol from the state
-	my $r = rand;
-	my $emit;
-	for (my $i = 0; $i < @{$cdf{$state{$csn}{pdf}}}; $i++) {
-		if ($r < $cdf{$state{$csn}{pdf}}[$i]) {
-			$emit = $i;
-			last;
-		}
+if ($STATIC_LENGTH) {
+	die "static length not supported yet";
+	for (my $i = 0; $i < $LENGTH; $i++) {
+		
 	}
-	print $fasta $emit;
-	if ($i == $LENGTH -1) {print $fasta "\n"}
-	else                  {print $fasta ","}
-	
-	# choose a new state
-	$r = rand;
-	foreach my $s (keys %{$state{$csn}{cdf}}) {
-		if ($r < $state{$csn}{cdf}{$s}) {
-			if ($s ne $csn) {
-			 	printf $tsv "%s %d\t%d\n", $csn, $csb+1, $i+1;
-			 	$csb = $i + 1;
-			 	$csn = $s;
-			}
-			last;
-		}
-	}
-}
 
+} else {
+	my $csn = "1x"; # current state name
+	my $csb = 0;    # current state begin
+	for (my $i = 0; $i < $LENGTH; $i++) {
+	
+		# emit a symbol from the state
+		my $r = rand;
+		my $emit;
+		for (my $i = 0; $i < @{$cdf{$state{$csn}{pdf}}}; $i++) {
+			if ($r < $cdf{$state{$csn}{pdf}}[$i]) {
+				$emit = $i;
+				last;
+			}
+		}
+		print $fasta $emit;
+		if ($i == $LENGTH -1) {print $fasta "\n"}
+		else                  {print $fasta ","}
+	
+		# choose a new state
+		$r = rand;
+		foreach my $s (keys %{$state{$csn}{cdf}}) {
+			if ($r < $state{$csn}{cdf}{$s}) {
+				if ($s ne $csn) {
+				 	printf $tsv "%s %d\t%d\n", $csn, $csb+1, $i+1;
+				 	$csb = $i + 1;
+				 	$csn = $s;
+				}
+				last;
+			}
+		}
+	}
+	printf $tsv "%s %d\t%d\n", $csn, $csb+1, $LENGTH;
+}
 
 
 
