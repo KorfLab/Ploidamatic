@@ -1,16 +1,15 @@
 #!/usr/bin/perl
 use strict; use warnings; use fatal;
 use Getopt::Std;
-use vars qw($opt_h $opt_f $opt_s);
-getopts('hf:s:');
+use vars qw($opt_f $opt_s);
+getopts('f:s:');
 
 my $FILENAME = "generated";
 
 die "
 usage: $0 [options] <hmm file> <emission file> <length>
 options:
-  -h  help (this message)
-  -f  <filename> [$opt_f]
+  -f  <filename> [$FILENAME]
   -s  <int> static state generation of <int> iterations
 " unless @ARGV == 3;
 
