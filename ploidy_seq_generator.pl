@@ -10,10 +10,10 @@ die "
 usage: $0 [options] <hmm file> <emission file> <length>
 options:
   -f  <filename> [$FILENAME]
-  -s  <int> static state generation of <int> iterations
+  -s  <int> static state mode
 " unless @ARGV == 3;
 
-my $STATIC_LENGTH = $opt_s;
+my $STATIC_MODE = $opt_s;
 $FILENAME = $opt_f if $opt_f;
 
 my ($HMMFILE, $EMITFILE, $LENGTH) = @ARGV;
@@ -93,10 +93,13 @@ open(my $tsv, ">$FILENAME.tsv") or die;
 print $fasta ">$FILENAME\n";
 print $tsv "#$FILENAME\n";
 
-if ($STATIC_LENGTH) {
-	die "static length not supported yet";
-	for (my $i = 0; $i < $LENGTH; $i++) {
-		
+if ($STATIC_MODE) {
+	
+	if ($STATIC_MODE == 1) { # 1x, 2x, 1x, 3x, 1x, 4x
+		my @state = qw(1x 2x 1x 3x 1x 4x);
+		for (my $i = 0; $i < @state; $i++) {
+			generate(\%cdf, $state[$i], $LENGTH, $i, $fasta, $tsv);
+		}
 	}
 
 } else {
@@ -113,9 +116,7 @@ if ($STATIC_LENGTH) {
 				last;
 			}
 		}
-		print $fasta $emit;
-		if ($i == $LENGTH -1) {print $fasta "\n"}
-		else                  {print $fasta ","}
+		print $fasta $emit, ",";
 	
 		# choose a new state
 		$r = rand;
@@ -125,6 +126,7 @@ if ($STATIC_LENGTH) {
 				 	printf $tsv "%s %d\t%d\n", $csn, $csb+1, $i+1;
 				 	$csb = $i + 1;
 				 	$csn = $s;
+				 	print $fasta "\n";
 				}
 				last;
 			}
@@ -133,6 +135,26 @@ if ($STATIC_LENGTH) {
 	printf $tsv "%s %d\t%d\n", $csn, $csb+1, $LENGTH;
 }
 
-
+sub generate {
+	my ($cdf, $model, $len, $frame, $fasta, $tsv) = @_;
+	
+	# write tsv
+	print $tsv join("\t", $frame * $len + 1, $frame * $len + $len,
+		$model), "\n";
+	
+	# write fasta
+	my @seq;
+	my $m = $cdf->{$model};
+	for (my $i = 0; $i < $len; $i++) {
+		my $r = rand;
+		for (my $j = 0; $j < @$m; $j++) {
+			if ($r < $m->[$j]) {
+				push @seq, $j;
+				last;
+			}
+		}
+	}
+	print $fasta join(",", @seq), "\n";
+}
 
 
