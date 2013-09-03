@@ -36,15 +36,18 @@ sub read_file {
 		my ($beg, $end, $state);
 		if (@f == 3) {
 			($beg, $end, $state) = @f;
-		} else {
+		} elsif (@f == 8) {
 			($beg, $end, $state) = ($f[3], $f[4], $f[2]);
+		} else {
+			die "malformatted annotation";
 		}
+		
 		for (my $i = $beg - 1; $i < $end; $i++) {
 			$ann[$i] = $state;
 		}
 	}
 	close IN;
-	
+		
 	return \@ann;
 }
 

@@ -97,8 +97,12 @@ if ($STATIC_MODE) {
 	
 	if ($STATIC_MODE == 1) { # 1x, 2x, 1x, 3x, 1x, 4x
 		my @state = qw(1x 2x 1x 3x 1x 4x);
-		for (my $i = 0; $i < @state; $i++) {
-			generate(\%cdf, $state[$i], $LENGTH, $i, $fasta, $tsv);
+		my $offset = 0;
+		for (my $i = 0; $i < 1000; $i++) {
+			for (my $s = 0; $s < @state; $s++) {
+				generate(\%cdf, $state[$s], $LENGTH, $offset, $fasta, $tsv);
+				$offset += $LENGTH;
+			}
 		}
 	}
 
@@ -136,11 +140,10 @@ if ($STATIC_MODE) {
 }
 
 sub generate {
-	my ($cdf, $model, $len, $frame, $fasta, $tsv) = @_;
+	my ($cdf, $model, $len, $offset, $fasta, $tsv) = @_;
 	
 	# write tsv
-	print $tsv join("\t", $frame * $len + 1, $frame * $len + $len,
-		$model), "\n";
+	print $tsv join("\t", $offset + 1, $offset + $len, $model), "\n";
 	
 	# write fasta
 	my @seq;

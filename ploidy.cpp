@@ -71,12 +71,14 @@ int main (int argc, const char * argv[]) {
 	/* init */
 	initialize_emission_vectors(emissions);
 	StochHMM::StateFuncs hmm_functions;
-	hmm_functions.assignPDFFunction("P05x", *emission);
-	hmm_functions.assignPDFFunction("P1x",	*emission);
-	hmm_functions.assignPDFFunction("P2x",	*emission);
-	hmm_functions.assignPDFFunction("P3x",	*emission);
-	hmm_functions.assignPDFFunction("P4x",	*emission);
-	hmm_functions.assignPDFFunction("P5x",	*emission);
+	hmm_functions.assignPDFFunction("1x", *emission);
+	hmm_functions.assignPDFFunction("2x", *emission);
+	hmm_functions.assignPDFFunction("3x", *emission);
+	hmm_functions.assignPDFFunction("4x", *emission);
+	hmm_functions.assignPDFFunction("Hi", *emission);
+	hmm_functions.assignPDFFunction("Lo", *emission);
+	hmm_functions.assignPDFFunction("Spike", *emission);
+	hmm_functions.assignPDFFunction("Zero", *emission);
 	StochHMM::model hmm;
 	hmm.import(hmm_file, &hmm_functions);
 	
