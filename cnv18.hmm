@@ -5,7 +5,7 @@ MODEL INFORMATION
 ======================================================
 MODEL_NAME:	Ploidy
 MODEL_DESCRIPTION:	18 state model for CNV detection
-MODEL_CREATION_DATE:	Wed Sep  4 12:06:24 PDT 2013
+MODEL_CREATION_DATE:	Wed Sep  4 14:24:34 PDT 2013
 
 TRACK SYMBOL DEFINITIONS
 ======================================================
@@ -41,7 +41,7 @@ STATE:
 	PATH_LABEL: 0
 TRANSITION:	STANDARD:	P(X)
 	1x:	1
-	1x-S:	1e-3
+	1x-S:	1e-2
 	1x-Z:	1e-2
 	2x:	1e-6
 	3x:	1e-6
@@ -81,7 +81,7 @@ STATE:
 TRANSITION:	STANDARD:	P(X)
 	1x:	1e-6
 	2x:	1
-	2x-S:	1e-3
+	2x-S:	1e-2
 	2x-Z:	1e-2
 	3x:	1e-6
 	4x:	1e-6
@@ -121,7 +121,7 @@ TRANSITION:	STANDARD:	P(X)
 	1x:	1e-6
 	2x:	1e-6
 	3x:	1
-	3x-S:	1e-3
+	3x-S:	1e-2
 	3x-Z:	1e-2
 	4x:	1e-6
 	Hi:	1e-6
@@ -161,7 +161,7 @@ TRANSITION:	STANDARD:	P(X)
 	2x:	1e-6
 	3x:	1e-6
 	4x:	1
-	4x-S:	1e-3
+	4x-S:	1e-2
 	4x-Z:	1e-2
 	Hi:	1e-6
 	Lo:	1e-6
@@ -201,7 +201,7 @@ TRANSITION:	STANDARD:	P(X)
 	3x:	1e-6
 	4x:	1e-6
 	Hi:	1
-	Hi-S:	1e-3
+	Hi-S:	1e-2
 	Hi-Z:	1e-2
 	Lo:	1e-6
 END:	1
@@ -241,7 +241,7 @@ TRANSITION:	STANDARD:	P(X)
 	4x:	1e-6
 	Hi:	1e-6
 	Lo:	1
-	Lo-S:	1e-3
+	Lo-S:	1e-2
 	Lo-Z:	1e-2
 END:	1
 EMISSION:	SEQ:	CONTINUOUS

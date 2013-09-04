@@ -6,14 +6,15 @@ use FileHandle;
 use Getopt::Std;
 use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
 	$opt_z $opt_Z $opt_s $opt_S);
-getopts('hdt:l:m:z:Z:s:S:');
+getopts('hq:dt:l:m:z:Z:s:S:');
 
 my $WDIR   = "ploidy_scratch";
+my $QUALITY = 20;
 my $TRANS  = "1e-6";
 my $ZERO1  = "1e-2";
-my $ZERO2  = "0.9";
-my $SPIKE1 = "1e-3";
-my $SPIKE2 = "0.8";
+my $ZERO2  = "0.5";
+my $SPIKE1 = "1e-2";
+my $SPIKE2 = "0.9";
 my $LOW   = 0;
 my $LIMIT   = 256;
 
@@ -21,6 +22,7 @@ die "
 usage: ploidy_hmm_generator.pl <sam file(s)>
 options:
   -d <string> working directory name [$WDIR]
+  -q <int>    quality value threshold [$QUALITY]
   -t <float>  CNV transition probability [$TRANS]
   -l <int>    low-count threshold [$LOW]
   -m <int>    maximum value from any emission [$LIMIT]
@@ -31,13 +33,14 @@ options:
   -h          help (this usage statement)
 " unless @ARGV;
 
-$LOW    = $opt_l if $opt_l;
-$TRANS  = $opt_t if $opt_t;
-$LIMIT  = $opt_m if $opt_m;
-$ZERO1  = $opt_z if $opt_z;
-$ZERO2  = $opt_Z if $opt_Z;
-$SPIKE1 = $opt_s if $opt_s;
-$SPIKE2 = $opt_S if $opt_S;
+$QUALITY = $opt_q if $opt_q;
+$LOW     = $opt_l if $opt_l;
+$TRANS   = $opt_t if $opt_t;
+$LIMIT   = $opt_m if $opt_m;
+$ZERO1   = $opt_z if $opt_z;
+$ZERO2   = $opt_Z if $opt_Z;
+$SPIKE1  = $opt_s if $opt_s;
+$SPIKE2  = $opt_S if $opt_S;
 
 # Set up working directory
 run("mkdir $WDIR") unless -d $WDIR;
@@ -47,20 +50,21 @@ run("mkdir $WDIR") unless -d $WDIR;
 #
 my %FH;
 my @filenames;
-if (-s "$WDIR/filenames") {
-	open(IN, "$WDIR/filenames") or die;
+if (-s "$WDIR/filenames.txt") {
+	open(IN, "$WDIR/filenames.txt") or die;
 	while (<IN>) {
 		chomp;
 		push @filenames, $_;
 	}
 } else {
-	open(OUT, ">$WDIR/filenames") or die;
+	open(OUT, ">$WDIR/filenames.txt") or die;
 	foreach my $file (@ARGV) {
 		if ($file =~ /\.gz$/) {open(IN, "gunzip -c $file |") or die}
 		else                  {open(IN, $file) or die}
 		while (<IN>) {
 			next if /^@/;
-			my ($foo, $bar, $chrom, $coor) = split;
+			my ($foo, $bar, $chrom, $coor, $qual) = split;
+			next if $qual < $QUALITY;
 			if (not defined $FH{$chrom}) {
 				$FH{$chrom} = new FileHandle;
 				$FH{$chrom}->open(">$WDIR/$chrom.loc");
@@ -109,6 +113,9 @@ foreach my $n (keys %logcount) {
 	}
 }
 my $window = 1024 * 2**(3 - $max_n);
+open(my $wfh, ">$WDIR/windowsize.txt") or die;
+print $wfh $window, "\n";
+close $wfh;
 
 # Create the 1x model
 my @count1x;

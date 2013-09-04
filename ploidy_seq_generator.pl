@@ -105,6 +105,60 @@ if ($STATIC_MODE) {
 			}
 		}
 	}
+	elsif ($STATIC_MODE == 2) {
+		my @state = qw(1x 1x-S 1x 2x 2x-S 2x 1x 3x 3x-S 3x 1x 4x 4x-S 4x);
+		my $SLEN = 10;
+		my $offset = 0;
+		for (my $i = 0; $i < 1000; $i++) {
+			for (my $s = 0; $s < @state; $s++) {
+				if ($state[$s] =~ /S$/) {
+					generate(\%cdf, $state[$s], $SLEN, $offset, $fasta, $tsv);
+					$offset += $SLEN;
+				} else {
+					generate(\%cdf, $state[$s], $LENGTH, $offset, $fasta, $tsv);
+					$offset += $LENGTH;
+				}
+			}
+		}
+	}
+	elsif ($STATIC_MODE == 3) {
+		my @state = qw(1x 1x-Z 1x 2x 2x-Z 2x 1x 3x 3x-Z 3x 1x 4x 4x-Z 4x);
+		my $ZLEN = 10;
+		my $offset = 0;
+		for (my $i = 0; $i < 1000; $i++) {
+			for (my $s = 0; $s < @state; $s++) {
+				if ($state[$s] =~ /Z$/) {
+					generate(\%cdf, $state[$s], $ZLEN, $offset, $fasta, $tsv);
+					$offset += $ZLEN;
+				} else {
+					generate(\%cdf, $state[$s], $LENGTH, $offset, $fasta, $tsv);
+					$offset += $LENGTH;
+				}
+			}
+		}
+	}
+	elsif ($STATIC_MODE == 4) {
+		my @state = qw(1x 1x-Z 1x 1x-S 1x 2x 2x-Z 2x 2x-S 2x 1x 3x 3x-Z 3x 3x-S  3x 1x 4x 4x-Z 4x 4x-S 4x);
+		my $ZLEN = 10;
+		my $SLEN = 10;
+		my $offset = 0;
+		for (my $i = 0; $i < 1000; $i++) {
+			for (my $s = 0; $s < @state; $s++) {
+				if ($state[$s] =~ /Z$/) {
+					generate(\%cdf, $state[$s], $ZLEN, $offset, $fasta, $tsv);
+					$offset += $ZLEN;
+				} elsif ($state[$s] =~ /S$/) {
+					generate(\%cdf, $state[$s], $SLEN, $offset, $fasta, $tsv);
+					$offset += $SLEN;
+				} else {
+					generate(\%cdf, $state[$s], $LENGTH, $offset, $fasta, $tsv);
+					$offset += $LENGTH;
+				}
+			}
+		}
+	} else {
+		die;
+	}
 
 } else {
 	my $csn = "1x"; # current state name
@@ -147,6 +201,8 @@ sub generate {
 	
 	# write fasta
 	my @seq;
+	if    ($model =~ /S$/) {$model = 'Spike'}
+	elsif ($model =~ /Z$/) {$model = 'Zero'}
 	my $m = $cdf->{$model};
 	for (my $i = 0; $i < $len; $i++) {
 		my $r = rand;
