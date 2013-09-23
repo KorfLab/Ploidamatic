@@ -1,0 +1,180 @@
+
+#STOCHHMM MODEL FILE
+
+MODEL INFORMATION
+======================================================
+MODEL_NAME:	Ploidy
+MODEL_DESCRIPTION:	12 state model for CNV detection
+MODEL_CREATION_DATE:	Sun Sep 22 08:41:21 PDT 2013
+
+TRACK SYMBOL DEFINITIONS
+======================================================
+SEQ:	REAL_NUMBER
+
+STATE DEFINITIONS
+######################################################
+STATE:	
+	NAME:	INIT
+TRANSITION:	STANDARD:	P(X)
+	1x	0.0833333333333333
+	1x-S	0.0833333333333333
+	1x-Z	0.0833333333333333
+	2x	0.0833333333333333
+	2x-S	0.0833333333333333
+	2x-Z	0.0833333333333333
+	3x	0.0833333333333333
+	3x-S	0.0833333333333333
+	3x-Z	0.0833333333333333
+	4x	0.0833333333333333
+	4x-S	0.0833333333333333
+	4x-Z	0.0833333333333333
+######################################################
+STATE:
+	NAME:	1x
+	GFF_DESC:	1x
+	PATH_LABEL: 0
+TRANSITION:	STANDARD:	P(X)
+	1x:	1
+	1x-S:	1e-2
+	1x-Z:	1e-2
+	2x:	1e-6
+	3x:	1e-6
+	4x:	1e-6
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	1x	PARAMETERS:	0
+######################################################
+STATE:
+	NAME:	1x-S
+	GFF_DESC:	1x-S
+	PATH_LABEL: 1
+TRANSITION:	STANDARD:	P(X)
+	1x:	0.1
+	1x-S:	0.9
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Spike	PARAMETERS:	4
+######################################################
+STATE:
+	NAME:	1x-Z
+	GFF_DESC:	1x-Z
+	PATH_LABEL: 2
+TRANSITION:	STANDARD:	P(X)
+	1x:	0.5
+	1x-Z:	0.5
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Zero	PARAMETERS:	5
+######################################################
+STATE:
+	NAME:	2x
+	GFF_DESC:	2x
+	PATH_LABEL: 3
+TRANSITION:	STANDARD:	P(X)
+	1x:	1e-6
+	2x:	1
+	2x-S:	1e-2
+	2x-Z:	1e-2
+	3x:	1e-6
+	4x:	1e-6
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	2x	PARAMETERS:	1
+######################################################
+STATE:
+	NAME:	2x-S
+	GFF_DESC:	2x-S
+	PATH_LABEL: 4
+TRANSITION:	STANDARD:	P(X)
+	2x:	0.1
+	2x-S:	0.9
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Spike	PARAMETERS:	4
+######################################################
+STATE:
+	NAME:	2x-Z
+	GFF_DESC:	2x-Z
+	PATH_LABEL: 5
+TRANSITION:	STANDARD:	P(X)
+	2x:	0.5
+	2x-Z:	0.5
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Zero	PARAMETERS:	5
+######################################################
+STATE:
+	NAME:	3x
+	GFF_DESC:	3x
+	PATH_LABEL: 6
+TRANSITION:	STANDARD:	P(X)
+	1x:	1e-6
+	2x:	1e-6
+	3x:	1
+	3x-S:	1e-2
+	3x-Z:	1e-2
+	4x:	1e-6
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	3x	PARAMETERS:	2
+######################################################
+STATE:
+	NAME:	3x-S
+	GFF_DESC:	3x-S
+	PATH_LABEL: 7
+TRANSITION:	STANDARD:	P(X)
+	3x:	0.1
+	3x-S:	0.9
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Spike	PARAMETERS:	4
+######################################################
+STATE:
+	NAME:	3x-Z
+	GFF_DESC:	3x-Z
+	PATH_LABEL: 8
+TRANSITION:	STANDARD:	P(X)
+	3x:	0.5
+	3x-Z:	0.5
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Zero	PARAMETERS:	5
+######################################################
+STATE:
+	NAME:	4x
+	GFF_DESC:	4x
+	PATH_LABEL: 9
+TRANSITION:	STANDARD:	P(X)
+	1x:	1e-6
+	2x:	1e-6
+	3x:	1e-6
+	4x:	1
+	4x-S:	1e-2
+	4x-Z:	1e-2
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	4x	PARAMETERS:	3
+######################################################
+STATE:
+	NAME:	4x-S
+	GFF_DESC:	4x-S
+	PATH_LABEL: 10
+TRANSITION:	STANDARD:	P(X)
+	4x:	0.1
+	4x-S:	0.9
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Spike	PARAMETERS:	4
+######################################################
+STATE:
+	NAME:	4x-Z
+	GFF_DESC:	4x-Z
+	PATH_LABEL: 11
+TRANSITION:	STANDARD:	P(X)
+	4x:	0.5
+	4x-Z:	0.5
+END:	1
+EMISSION:	SEQ:	CONTINUOUS
+	PDF:	Zero	PARAMETERS:	5
+######################################################
+//END
