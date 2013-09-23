@@ -77,9 +77,9 @@ if (-s "$WDIR/filenames.txt") {
 	close OUT;
 }
 
-#
-# Determine the proper window size
-#
+####################################
+# Determine the proper window size #
+####################################
 my $max_count = 0;
 my %zero;
 my %logcount;
@@ -112,49 +112,51 @@ foreach my $n (keys %logcount) {
 		$max_n = $n;
 	}
 }
-my $window = 1024 * 2**(3 - $max_n);
+my $window = 1024 * 2**(3 - $max_n); # consider changing
 open(my $wfh, ">$WDIR/windowsize.txt") or die;
 print $wfh $window, "\n";
 close $wfh;
 
-# Create the 1x model
-my @count1x;
+############################
+# Create the diploid model #
+############################
+my @count2x;
 foreach my $file (@filenames) {
 	open(IN, "cpw $file $window |") or die;
 	while (<IN>) {
 		chomp;
 		next if $_ == 0 or $_ > $LIMIT;
-		$count1x[$_]++;
+		$count2x[$_]++;
 	}
 	close IN;
 }
-my $freq1x = count2freq(\@count1x);
+my $freq2x = count2freq(\@count2x);
 
-#
-# Create derived models
-#
+#########################
+# Create derived models #
+#########################
 my %dname = (
-	'Lo' => 0.5,
-	'Hi' => 10,
-	'2x' => 2,
-	'3x' => 3,
-	'4x' => 4,
+	'1x' => 0.5,
+	'3x' => 1.5,
+	'4x' => 2,
 );
 
+# sampled models
 my %model;
 foreach my $name (sort keys %dname) {
-	$model{$name} = resample($freq1x, $dname{$name});
+	$model{$name} = resample($freq2x, $dname{$name});
 }
-$model{'1x'} = $freq1x;
+$model{'2x'} = $freq2x;
 
+# geometric models
 for (my $i = 0; $i < $LIMIT; $i++) {
 	$model{'Zero'}[$i] = 2 ** -($i+1);
-	$model{'Spike'}[$i] = 2 ** -($LIMIT - $i);
+	$model{'Spike'}[$i] = 2 ** -($LIMIT - $i);	
 }
 
-#
-# Write the emission file
-#
+###########################
+# Write the emission file #
+###########################
 open(OUT, ">$WDIR/emission.txt") or die;	
 foreach my $mn (sort keys %model) {print OUT "$mn\t"}
 print OUT "\n";
@@ -172,9 +174,9 @@ for (my $i = 0; $i < $LIMIT; $i++) {
 }
 close OUT;
 
-#
-# Create parameter file for StochHMM
-#
+######################################
+# Create parameter file for StochHMM #
+######################################
 my %state;
 my $n = 0;
 foreach my $mn (sort keys %model) {
@@ -183,6 +185,7 @@ foreach my $mn (sort keys %model) {
 	$state{"$mn-S"} = $n++;
 	$state{"$mn-Z"} = $n++;
 }
+
 my %matrix;
 foreach my $n1 (keys %state) {
 	foreach my $n2 (keys %state) {
@@ -210,14 +213,14 @@ foreach my $n1 (keys %state) {
 }
 
 my $DATE = `date`; chomp $DATE;
-open(OUT, ">$WDIR/cnv18.hmm") or die;
+open(OUT, ">$WDIR/cnv12.hmm") or die;
 print OUT "\
 #STOCHHMM MODEL FILE
 
 MODEL INFORMATION
 ======================================================
 MODEL_NAME:	Ploidy
-MODEL_DESCRIPTION:	18 state model for CNV detection
+MODEL_DESCRIPTION:	12 state model for CNV detection
 MODEL_CREATION_DATE:	$DATE
 
 TRACK SYMBOL DEFINITIONS
@@ -240,8 +243,8 @@ foreach my $mn (sort keys %state) {
 foreach my $s1 (sort keys %state) {
 	my $pdf;
 	if    ($s1 =~ /^(\d)x$/) {$pdf = $s1}
-	elsif ($s1 =~ /Z$/)      {$pdf = 'Zero'}
 	elsif ($s1 =~ /S$/)      {$pdf = 'Spike'}
+	elsif ($s1 =~ /Z$/)      {$pdf = 'Zero'}
 	else                     {$pdf = $s1}
 	
 	print OUT "######################################################\n";
@@ -279,15 +282,33 @@ sub resample {
 	my @data;
 	for (my $i = 0; $i < 1e6; $i++) {
 		my $val;
-		if ($x < 1) {
+		if ($x == 0.5) {
 			my $rnd = rand(1);
 			for (my $k = 0; $k < @pr; $k++) {
 				if ($rnd <= $pr[$k]) {
-					$val = int $k * $x;
+					$val = int $k * 0.5;
 					last;
 				}
 			}
-		} else {
+		} elsif ($x == 1.5) {
+			my $rnd = rand(1);
+			for (my $k = 0; $k < @pr; $k++) {
+				if ($rnd <= $pr[$k]) {
+					$val = int $k * 0.5;
+					last;
+				}
+			}
+			
+			my $rnd1 = rand(1);
+			my $v = 0;
+			for (my $k = 0; $k < @pr; $k++) {
+				if ($rnd <= $pr[$k]) {
+					$v = $k;
+					last;
+				}
+			}
+			$val += $v;
+		} elsif ($x == 2) { # works with any integer > 1
 			for (my $j = 0; $j < $x; $j++) {
 				my $rnd = rand(1);
 				my $v = 0;
@@ -299,6 +320,8 @@ sub resample {
 				}
 				$val += $v;
 			}
+		} else {
+			die "unsupported value of X";
 		}
 		push @data, $val unless $val >= $LIMIT;
 	}

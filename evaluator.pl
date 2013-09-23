@@ -9,6 +9,7 @@ my $obs = read_file($ARGV[1]);
 
 my %match;
 for (my $i = 0; $i < @$ann; $i++) {
+	last if not defined $obs->[$i];
 	$match{$ann->[$i]}{$obs->[$i]}++;
 }
 

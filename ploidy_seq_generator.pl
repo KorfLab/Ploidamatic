@@ -95,8 +95,8 @@ print $tsv "#$FILENAME\n";
 
 if ($STATIC_MODE) {
 	
-	if ($STATIC_MODE == 1) { # 1x, 2x, 1x, 3x, 1x, 4x
-		my @state = qw(1x 2x 1x 3x 1x 4x);
+	if ($STATIC_MODE == 1) {
+		my @state = qw(1x 2x 3x 4x);
 		my $offset = 0;
 		for (my $i = 0; $i < 1000; $i++) {
 			for (my $s = 0; $s < @state; $s++) {
@@ -106,7 +106,7 @@ if ($STATIC_MODE) {
 		}
 	}
 	elsif ($STATIC_MODE == 2) {
-		my @state = qw(1x 1x-S 1x 2x 2x-S 2x 1x 3x 3x-S 3x 1x 4x 4x-S 4x);
+		my @state = qw(1x 1x-S 1x 2x 2x-S 2x 3x 3x-S 3x 4x 4x-S 4x);
 		my $SLEN = 10;
 		my $offset = 0;
 		for (my $i = 0; $i < 1000; $i++) {
@@ -122,7 +122,7 @@ if ($STATIC_MODE) {
 		}
 	}
 	elsif ($STATIC_MODE == 3) {
-		my @state = qw(1x 1x-Z 1x 2x 2x-Z 2x 1x 3x 3x-Z 3x 1x 4x 4x-Z 4x);
+		my @state = qw(1x 1x-Z 1x 2x 2x-Z 2x 3x 3x-Z 3x 4x 4x-Z 4x);
 		my $ZLEN = 10;
 		my $offset = 0;
 		for (my $i = 0; $i < 1000; $i++) {
@@ -138,7 +138,7 @@ if ($STATIC_MODE) {
 		}
 	}
 	elsif ($STATIC_MODE == 4) {
-		my @state = qw(1x 1x-Z 1x 1x-S 1x 2x 2x-Z 2x 2x-S 2x 1x 3x 3x-Z 3x 3x-S  3x 1x 4x 4x-Z 4x 4x-S 4x);
+		my @state = qw(1x 1x-Z 1x 1x-S 1x 2x 2x-Z 2x 2x-S 2x 3x 3x-Z 3x 3x-S 3x 4x 4x-Z 4x 4x-S 4x);
 		my $ZLEN = 10;
 		my $SLEN = 10;
 		my $offset = 0;
