@@ -2,8 +2,8 @@
 # Makefile for Ploidy #
 #######################
 
-APP1 = ploidy
-SRC1 = ploidy.cpp
+APP1 = ploidamatic
+SRC1 = ploidamatic.cpp
 
 APP2 = cpw
 SRC2 = cpw.c
