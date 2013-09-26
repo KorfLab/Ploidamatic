@@ -22,7 +22,7 @@ foreach my $file (@file) {
 }
 close OUT;
 
-system("ploidy $DIR/cnv18.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.gff")
+system("ploidy $DIR/cnv12.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.gff")
 	== 0 or die;
 	
 
