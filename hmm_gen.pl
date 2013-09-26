@@ -8,7 +8,7 @@ use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
 	$opt_z $opt_Z $opt_s $opt_S);
 getopts('hq:dt:l:m:z:Z:s:S:');
 
-my $WDIR   = "ploidy_scratch";
+my $WDIR   = "ploidamatic_scratch";
 my $QUALITY = 20;
 my $TRANS  = "1e-6";
 my $ZERO1  = "1e-2";
@@ -19,7 +19,7 @@ my $LOW   = 0;
 my $LIMIT   = 256;
 
 die "
-usage: ploidy_hmm_generator.pl <sam file(s)>
+usage: hmm_gen.pl <sam file(s)>
 options:
   -d <string> working directory name [$WDIR]
   -q <int>    quality value threshold [$QUALITY]
@@ -219,7 +219,7 @@ print OUT "\
 
 MODEL INFORMATION
 ======================================================
-MODEL_NAME:	Ploidy
+MODEL_NAME:	Ploidamatic
 MODEL_DESCRIPTION:	12 state model for CNV detection
 MODEL_CREATION_DATE:	$DATE
 
