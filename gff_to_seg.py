@@ -4,10 +4,10 @@ import argparse, os
 parser = argparse.ArgumentParser(description='gff_to_seq.py converts a gff file containing CNV information into a SEG file that can \
 											  be viewed and interpreted correctly as CNV information within IGV Viewer. This script \
 											  also converts -Z and -H states into the parent state')
-parser.add_argument('-d', default='ploidamatic_scratch/', type=str, help='Directory containing seq.gff', metavar='Directory')
+parser.add_argument('-d', default='ploidamatic_scratch/', type=str, help='Directory containing seq.win', metavar='Directory')
 args = parser.parse_args()
 indir = args.d
-i_path = os.path.join(indir, "seq.gff")
+i_path = os.path.join(indir, "seq.win")
 o_path_1 = os.path.join(indir, "seq.seg")
 o_path_2 = os.path.join(indir, "seq.bed")
 

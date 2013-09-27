@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-use fatal;
 use FileHandle;
 use Getopt::Std;
 use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
