@@ -22,14 +22,14 @@ foreach my $file (@file) {
 }
 close OUT;
 
-system("ploidamatic $DIR/cnv12.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.gff")
+system("ploidamatic $DIR/cnv12.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.win")
 	== 0 or die;
 system("gff_to_seg.py -d $DIR") == 0 or die;
 
 
 # fix the GFF (window size and strip -S and -X)
 my %gff;
-open(IN, "$DIR/seq.gff") or die;
+open(IN, "$DIR/seq.win") or die;
 while (<IN>) {
 	next unless /\S/;
 	my ($chrom, $tool, $state, $beg, $end) = split;
@@ -41,13 +41,15 @@ while (<IN>) {
 }
 close IN;
 
+# create GFF output
+open(OUT, ">$DIR/seq.gff") or die;
 foreach my $chrom (sort keys %gff) {
 	for (my $i = 0; $i < @{$gff{$chrom}}; $i++) {
 		my $s1 = substr($gff{$chrom}[$i]{state}, 0, 2);
 		for (my $j = $i +1; $j < @{$gff{$chrom}} -1; $j++) {
 			my $s2 = substr($gff{$chrom}[$j]{state}, 0, 2);
 			if ($s1 ne $s2) {
-				print join("\t", $chrom, 'ploidamatic', $s1,
+				print OUT join("\t", $chrom, 'ploidamatic', $s1,
 					$gff{$chrom}[$i  ]{beg} * $windowsize,
 					$gff{$chrom}[$j-1]{end} * $windowsize,
 					'.', '+', '.'), "\n";
@@ -56,13 +58,4 @@ foreach my $chrom (sort keys %gff) {
 			}
 		}
 	}
-}
-
-
-
-sub report {
-	my ($gff) = @_;
-	print join("\t", $gff->{chrom}, 'ploidamatic', $gff->{state}, $gff->{beg},
-		$gff->{end}, '.', '+', '.'), "\n";
-	
 }
