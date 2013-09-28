@@ -24,7 +24,7 @@ close OUT;
 
 system("ploidamatic $DIR/cnv12.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.win")
 	== 0 or die;
-system("win_to_seg.py -d $DIR") == 0 or die;
+system("gff_to_seg.py -d $DIR") == 0 or die;
 
 
 # fix the GFF (window size and strip -S and -X)
