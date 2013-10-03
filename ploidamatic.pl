@@ -52,7 +52,8 @@ foreach my $chrom (sort keys %gff) {
 				print OUT join("\t", $chrom, 'ploidamatic', $s1,
 					$gff{$chrom}[$i  ]{beg} * $windowsize,
 					$gff{$chrom}[$j-1]{end} * $windowsize,
-					'.', '+', '.'), "\n";
+					'.', '+', '.',
+					$gff{$chrom}[$j-1]{end} * $windowsize - $gff{$chrom}[$i  ]{beg} * $windowsize), "\n";
 				$i = $j - 1;
 				last;
 			}
