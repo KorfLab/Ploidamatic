@@ -5,8 +5,8 @@ use fatal;
 use FileHandle;
 use Getopt::Std;
 use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
-	$opt_z $opt_Z $opt_s $opt_S);
-getopts('hq:dt:l:m:z:Z:s:S:');
+	$opt_z $opt_Z $opt_s $opt_S $opt_w);
+getopts('hq:dt:l:m:z:Z:s:S:w:');
 
 my $WDIR   = "ploidamatic_scratch";
 my $QUALITY = 20;
@@ -15,8 +15,9 @@ my $ZERO1  = "1e-2";
 my $ZERO2  = "0.5";
 my $SPIKE1 = "1e-2";
 my $SPIKE2 = "0.9";
-my $LOW   = 0;
-my $LIMIT   = 256;
+my $LOW    = 0;
+my $LIMIT  = 256;
+my $WSIZE  = 0;
 
 die "
 usage: hmm_gen.pl <sam file(s)>
@@ -30,6 +31,7 @@ options:
   -Z <float>  transition probability stay zero state [$ZERO2]
   -s <float>  transition probability to spike state [$SPIKE1]
   -S <float>  transition probability stay spike state [$SPIKE2]
+  -w <int>    window size manual override
   -h          help (this usage statement)
 " unless @ARGV;
 
@@ -41,6 +43,7 @@ $ZERO1   = $opt_z if $opt_z;
 $ZERO2   = $opt_Z if $opt_Z;
 $SPIKE1  = $opt_s if $opt_s;
 $SPIKE2  = $opt_S if $opt_S;
+$WSIZE   = $opt_w if $opt_w;
 
 # Set up working directory
 run("mkdir $WDIR") unless -d $WDIR;
@@ -112,9 +115,15 @@ foreach my $n (keys %logcount) {
 		$max_n = $n;
 	}
 }
+
 my $window = 1024 * 2**(3 - $max_n); # consider changing
+
 open(my $wfh, ">$WDIR/windowsize.txt") or die;
-print $wfh $window, "\n";
+if ($WSIZE) {
+	print $wfh $WSIZE, "\n"; # manual override
+} else {
+	print $wfh $window, "\n";
+}
 close $wfh;
 
 ############################
