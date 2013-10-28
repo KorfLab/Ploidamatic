@@ -24,7 +24,7 @@ close OUT;
 
 system("ploidamatic $DIR/cnv12.hmm $DIR/emission.txt $DIR/seq.fa > $DIR/seq.win")
 	== 0 or die;
-system("gff_to_seg.py -d $DIR") == 0 or die;
+#system("gff_to_bed.py -d $DIR") == 0 or die;
 
 
 # fix the GFF (window size and strip -S and -X)
@@ -52,7 +52,8 @@ foreach my $chrom (sort keys %gff) {
 				print OUT join("\t", $chrom, 'ploidamatic', $s1,
 					$gff{$chrom}[$i  ]{beg} * $windowsize,
 					$gff{$chrom}[$j-1]{end} * $windowsize,
-					'.', '+', '.'), "\n";
+					'.', '+', '.',
+					$gff{$chrom}[$j-1]{end} * $windowsize - $gff{$chrom}[$i  ]{beg} * $windowsize), "\n";
 				$i = $j - 1;
 				last;
 			}
