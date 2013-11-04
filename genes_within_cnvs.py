@@ -3,9 +3,10 @@ import argparse, os, re
 
 parser = argparse.ArgumentParser(description='genes_within_cnvs.py takes in a list of CNV loci and a GFF file and outputs \
                                  all non-transposable element genes located within those loci')
-parser.add_argument('-d', default="SuecicaProject/Sue1Set5/", type=str, help='Directory where duplicated_loci.txt is located \
+parser.add_argument('-d', default="SuecicaProject/Ler0/", type=str, help='Directory where duplicated_loci.txt is located \
                     and where CNV genes will be output', metavar='Directory')
-parser.add_argument('-g', default="../Genomes/Thalyrata.gff", type=str, help='Path to GFF file', metavar='GFF')
+#parser.add_argument('-g', default="../Genomes/Thalyrata.gff", type=str, help='Path to GFF file', metavar='GFF')
+parser.add_argument('-g', default="../Genomes/TAIR9_GFF3_genes_transposons.gff", type=str, help='Path to GFF file', metavar='GFF')
 args = parser.parse_args()
 indir = args.d
 gff_file = args.g
@@ -24,14 +25,14 @@ with open(i_file) as infile:
 
 pattern = r'Name=(AT\d{1}G\d{5})'
 recomp = re.compile(pattern)
-chrom_accept = ['AtChr1','AtChr2','AtChr3','AtChr4','AtChr5']
+chrom_accept = ['AtChr1','AtChr2','AtChr3','AtChr4','AtChr5', 'Chr1', 'Chr2', 'Chr3', 'Chr4', 'Chr5']
 results = {}
 with open(gff_file) as infile:
     for line in infile:
         line = line.split()
         chrom = line[0]
         feature = line[2]
-        if feature == "gene" and chrom in chrom_accept:
+        if feature == "gene" and chrom in chrom_accept and chrom in cnv_loci:
             start = int(line[3])
             end = int(line[4])
             desc = line[8]
