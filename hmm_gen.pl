@@ -7,7 +7,7 @@ use vars qw($opt_h $opt_q $opt_d $opt_l $opt_m $opt_t
 	$opt_z $opt_Z $opt_s $opt_S $opt_w);
 getopts('hq:dt:l:m:z:Z:s:S:w:');
 
-my $WDIR   = "dosamatic_scratch";
+my $WDIR   = "ploidamatic_scratch";
 my $QUALITY = 20;
 my $TRANS  = "1e-6";
 my $ZERO1  = "1e-2";
@@ -227,7 +227,7 @@ print OUT "\
 
 MODEL INFORMATION
 ======================================================
-MODEL_NAME:	Dosamatic
+MODEL_NAME:	Ploidamatic
 MODEL_DESCRIPTION:	12 state model for CNV detection
 MODEL_CREATION_DATE:	$DATE
 
